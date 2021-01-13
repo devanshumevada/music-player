@@ -1,32 +1,23 @@
-import {useRef, useState} from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {faPlay, faPause ,faAngleLeft, faAngleRight} from '@fortawesome/free-solid-svg-icons';
 
 const Player = props  => {
-        const audio_ref = useRef(null);
+        
         const handle_song_play = () => {
                 if (props.is_playing) {
-                        audio_ref.current.pause();
+                        props.audio_ref.current.pause();
                         props.set_is_playing(!props.is_playing);
                 } else {
-                        audio_ref.current.play();
+                        props.audio_ref.current.play();
                         props.set_is_playing(!props.is_playing);
                 }
         }
 
-        const handle_time_update = e  => {
-                set_song_info({
-                        ...song_info,
-                        current_time: e.target.currentTime,
-                        duration: e.target.duration
-
-                });
-        }
 
         const handle_drag = e => {
-                audio_ref.current.currentTime = e.target.value;
-                set_song_info({
-                        ...song_info,
+               props.audio_ref.current.currentTime = e.target.value;
+                props.set_song_info({
+                        ...props.song_info,
                         current_time: e.target.value
                 });
         }
@@ -35,16 +26,13 @@ const Player = props  => {
                 return Math.floor(time / 60) + ":" + ("0" + Math.floor(time % 60)).slice(-2);
         }
 
-        const [song_info, set_song_info] = useState({
-                current_time: 0,
-                duration: 0
-        });
+       
         return (
                 <div className="player">
                        <div className="time-control">
-                                <p>{get_formatted_time(song_info.current_time)}</p>
-                                <input onChange={handle_drag} min={0} max={song_info.duration} value={song_info.current_time} type="range" />
-                                <p>{get_formatted_time(song_info.duration)}</p>
+                                <p>{get_formatted_time(props.song_info.current_time)}</p>
+                                <input onChange={handle_drag} min={0} max={props.song_info.duration || 0} value={props.song_info.current_time} type="range" />
+                                <p>{get_formatted_time(props.song_info.duration || 0)}</p>
 
                         </div>
 
@@ -68,13 +56,6 @@ const Player = props  => {
                                         size="2x" />
                         </div>
 
-                        <audio 
-                                onLoadedMetadata={handle_time_update}  
-                                onTimeUpdate={handle_time_update} 
-                                ref={audio_ref} 
-                                src={props.current_song.audio}>
-
-                        </audio>
                 </div>
         );
 }

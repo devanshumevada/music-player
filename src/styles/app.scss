@@ -6,7 +6,18 @@
 
 @import './player';
 @import './song';
+@import './library';
+@import './nav';
 
+
+body {
+        font-family: 'Lato', sans-serif;
+}
+
+h3, h4 {
+        font-weight: 400;
+        color: rgb(100, 100, 100);
+}
 
 h1, h2, h3 {
         color:rgba(0, 0, 0, 0.63);

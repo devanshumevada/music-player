@@ -1,3 +1,5 @@
+import {play_audio} from '../util';
+
 const LibrarySong = props => {
         const handle_selected_song = ()  => {
 
@@ -14,14 +16,7 @@ const LibrarySong = props => {
                 });
                 props.set_songs(updated_songs);
                 // Checking for the audio to load up
-                if (props.is_playing) {
-                        const play_promise = props.audio_ref.current.play();
-                        if (play_promise !== undefined) {
-                                play_promise.then(audio=>{
-                                        props.audio_ref.current.play();
-                                });
-                        }
-                }
+                play_audio(props.is_playing, props.audio_ref);
                 props.set_library_status(false);
         }
         return (

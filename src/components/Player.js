@@ -1,8 +1,29 @@
+import {useEffect} from 'react';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faPlay, faPause ,faAngleLeft, faAngleRight} from '@fortawesome/free-solid-svg-icons';
+import {faPlay, 
+        faPause,
+        faAngleLeft, 
+        faAngleRight
+} from '@fortawesome/free-solid-svg-icons';
+
+import {play_audio} from '../util';
 
 const Player = props  => {
-        
+        useEffect(()=>{
+                const updated_songs = props.songs.map(song=>{
+                        if (song.id === props.current_song.id) {
+                                return {...song, active:true}
+                                
+                        } else {
+                                return {
+                                        ...song, active:false
+                                }
+                        }
+                });
+                props.set_songs(updated_songs); 
+                play_audio(props.is_playing, props.audio_ref);
+        },[props.current_song]);
+
         const handle_song_play = () => {
                 if (props.is_playing) {
                         props.audio_ref.current.pause();
@@ -26,6 +47,13 @@ const Player = props  => {
                 return Math.floor(time / 60) + ":" + ("0" + Math.floor(time % 60)).slice(-2);
         }
 
+        const handle_track_skip = direction => {
+                const current_song_position = props.songs.findIndex(song => song.id === props.current_song.id);
+                let next_song_position = (current_song_position + direction) % props.songs.length;
+                next_song_position = next_song_position >= 0 ? next_song_position : props.songs.length - 1;
+                props.set_current_song(props.songs[next_song_position]);
+        }
+
        
         return (
                 <div className="player">
@@ -37,7 +65,8 @@ const Player = props  => {
                         </div>
 
                         <div className="player-control">
-                                <FontAwesomeIcon 
+                                <FontAwesomeIcon
+                                        onClick={()=>handle_track_skip(-1)} 
                                         className="skip_back" 
                                         icon={faAngleLeft} 
                                         size="2x" />
@@ -51,6 +80,7 @@ const Player = props  => {
                                 
                                 
                                 <FontAwesomeIcon 
+                                        onClick={()=>handle_track_skip(1)}
                                         className="skip_forward" 
                                         icon={faAngleRight} 
                                         size="2x" />

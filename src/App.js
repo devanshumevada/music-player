@@ -24,7 +24,17 @@ const App = () => {
                         duration: e.target.duration
 
                 });
-        }
+	}
+	
+	const handle_song_endings = async () => {
+		const current_song_position = songs.findIndex(song => song.id === current_song.id);
+		let next_song_position = (current_song_position + 1) % songs.length;
+                next_song_position = next_song_position >= 0 ? next_song_position : songs.length - 1;
+		await set_current_song(songs[next_song_position]);
+		if (is_playing) {
+			audio_ref.current.play();
+		}
+	}
 	return (
 		<div className="App">
 			<Nav 
@@ -56,7 +66,8 @@ const App = () => {
                                 onLoadedMetadata={handle_time_update}  
                                 onTimeUpdate={handle_time_update} 
                                 ref={audio_ref} 
-                                src={current_song.audio}>
+                                src={current_song.audio}
+				onEnded={handle_song_endings}>
 
                         </audio>
 		</div>

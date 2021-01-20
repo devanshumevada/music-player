@@ -6,7 +6,6 @@ import {faPlay,
         faAngleRight
 } from '@fortawesome/free-solid-svg-icons';
 
-import {play_audio} from '../util';
 
 const Player = props  => {
         useEffect(()=>{
@@ -21,7 +20,7 @@ const Player = props  => {
                         }
                 });
                 props.set_songs(updated_songs); 
-                play_audio(props.is_playing, props.audio_ref);
+                if (props.is_playing) props.audio_ref.current.play();
         },[props.current_song]);
 
         const handle_song_play = () => {
@@ -47,11 +46,12 @@ const Player = props  => {
                 return Math.floor(time / 60) + ":" + ("0" + Math.floor(time % 60)).slice(-2);
         }
 
-        const handle_track_skip = direction => {
+        const handle_track_skip = async direction => {
                 const current_song_position = props.songs.findIndex(song => song.id === props.current_song.id);
                 let next_song_position = (current_song_position + direction) % props.songs.length;
                 next_song_position = next_song_position >= 0 ? next_song_position : props.songs.length - 1;
-                props.set_current_song(props.songs[next_song_position]);
+                await props.set_current_song(props.songs[next_song_position]);
+                if (props.is_playing) props.audio_ref.current.play();
         }
 
        
@@ -60,6 +60,7 @@ const Player = props  => {
                        <div className="time-control">
                                 <p>{get_formatted_time(props.song_info.current_time)}</p>
                                 <input onChange={handle_drag} min={0} max={props.song_info.duration || 0} value={props.song_info.current_time} type="range" />
+                                <div className="animate-track"></div>
                                 <p>{get_formatted_time(props.song_info.duration || 0)}</p>
 
                         </div>

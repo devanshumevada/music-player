@@ -31,12 +31,27 @@ const App = () => {
 		let next_song_position = (current_song_position + 1) % songs.length;
                 next_song_position = next_song_position >= 0 ? next_song_position : songs.length - 1;
 		await set_current_song(songs[next_song_position]);
+		active_library_handler(songs[next_song_position]);
 		if (is_playing) {
 			audio_ref.current.play();
 		}
 	}
+
+	const active_library_handler = next_prev => {
+                const updated_songs = songs.map(song=>{
+                        if (song.id === next_prev.id) {
+                                return {...song, active:true}
+                                
+                        } else {
+                                return {
+                                        ...song, active:false
+                                }
+                        }
+		});
+                set_songs(updated_songs); 
+        }
 	return (
-		<div className="App">
+		<div className={`App ${library_status ? "library-active" : ""}`}>
 			<Nav 
 				library_status={library_status} 
 				set_library_status={set_library_status} />
@@ -52,7 +67,8 @@ const App = () => {
 				set_is_playing={set_is_playing} 
 				songs={songs}
 				set_current_song={set_current_song}
-				set_songs={set_songs} />
+				set_songs={set_songs}
+				active_library_handler={active_library_handler} />
 			
 			<Library  
 				set_current_song={set_current_song} 

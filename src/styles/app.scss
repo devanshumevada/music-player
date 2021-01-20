@@ -4,12 +4,6 @@
         box-sizing: border-box;
 }
 
-@import './player';
-@import './song';
-@import './library';
-@import './nav';
-
-
 body {
         font-family: 'Lato', sans-serif;
 }
@@ -22,3 +16,16 @@ h3, h4 {
 h1, h2, h3 {
         color:rgba(0, 0, 0, 0.63);
 }
+
+.App {
+        transition: all 0.5s ease;    
+}
+
+.library-active {
+        margin-left: 20rem;
+}
+
+@import './player';
+@import './song';
+@import './library';
+@import './nav';
